@@ -4,15 +4,17 @@
 vaultwarden_docker_image: vaultwarden/server
 vaultwarden_docker_image_tag: alpine
 vaultwarden_container_name: vaultwarden
-vaultwarden_port: 80
+# vaultwarden_port: 80  # TODO
 
-vaultwarden_networks: null
+vaultwarden_networks:
+  - name: "{{ docker_network_name }}"
 vaultwarden_container_memory_limit: null
 vaultwarden_upgrade: no
 # To configure vaultwarden you can use `vaultwarden_config:`.
 # These are the environment variables from
 # https://raw.githubusercontent.com/dani-garcia/vaultwarden/main/.env.template
 
+vaultwarden_config: null
 # vaultwarden_config:
 #   DATA_FOLDER: "data"
 #   # DATABASE_URL: "data/db.sqlite3"  # does not work with alpine

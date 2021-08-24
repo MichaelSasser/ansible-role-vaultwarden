@@ -1,38 +1,63 @@
-Role Name
-=========
+# Ansible Role: Vaultwarden
 
-A brief description of the role goes here.
+An Ansible role, which installs and manages a Vaultwarden Docker container.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role doesn't install Docker on the host. You need to make sure the docker
+is installed and running on your system. You can do that e.g. with [ericsysmin's collection](https://galaxy.ansible.com/ericsysmin/docker) (which only contains the docker role).
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 
-Dependencies
-------------
+| Variable                             | Default Value                           | Description                                                                       |
+| ----------------------------------   | --------------------------------------- | --------------------------------------------------------------------------------- |
+| `vaultwarden_docker_image`           | vaultwarden/server                      | The docker image, which is used to pull the container.                            |
+| `vaultwarden_docker_image_tag`       | alpine                                  | The tag of the image.                                                             |
+| `vaultwarden_container_name`         | vaultwarden                             | The container name.                                                               |
+| `vaultwarden_networks`               | `- name: "{{ docker_network_name }}"`   | The network the container will be connected to.                                   |
+| `vaultwarden_container_memory_limit` | null                                    | A memory limit for the container                                                  |
+| `vaultwarden_upgrade`                | no                                      | if set to `yes` the container will be updated to the latest version (of the tag). |
+| `vaultwarden_config`                 | null                                    | The Vaultwarden config (see below)                                                |
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### Vaultwarden Config
 
-Example Playbook
-----------------
+This role uses environment variables to configure Vaultwarden.
+You can configure them through the `vaultwarden_config` variable.
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+All available environment variables are listed in the `.env.template` file
+([direct-link](https://raw.githubusercontent.com/dani-garcia/vaultwarden/main/.env.template))
+on the 
+[Vaultwarden repo](https://raw.githubusercontent.com/dani-garcia/vaultwarden).
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+The only thing you have to do is to use valid `yaml` syntax to define them 
+(replace `=` with `:`).
 
-License
--------
+#### Example
 
-BSD
+```yaml
+---
 
-Author Information
-------------------
+vaultwarden_config:
+  DATABASE_URL: "postgresql://db_user:my_secret@postgres:5432/db"
+  DATABASE_MAX_CONNS: "10"
+  IP_HEADER: "X-Real-IP"
+  SIGNUPS_ALLOWED: "false"
+  SIGNUPS_VERIFY: "true"
+  SIGNUPS_VERIFY_RESEND_TIME: "3600"
+  SIGNUPS_VERIFY_RESEND_LIMIT: "6"
+  SIGNUPS_DOMAINS_WHITELIST: "yourdomain.tld, anotherdomain.tld"
+  SHOW_PASSWORD_HINT: "false"
+  DOMAIN: "https://pw.yourdomain.tld"
+  SMTP_HOST: "mail.yourdomain.tld"
+  SMTP_FROM: "service@yourdomain.tld"
+  SMTP_FROM_NAME: "Something - Service"
+  SMTP_PORT: "587"
+  SMTP_USERNAME: "service@yourdomain.tld"
+  SMTP_PASSWORD: "your_smtp_app_password"
+```
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## License
+
+Copyright &copy; 2021 Michael Sasser <Info@MichaelSasser.org>. Released under
+the GPLv3 license.

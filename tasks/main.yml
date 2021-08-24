@@ -14,21 +14,9 @@
     container_default_behavior: no_defaults
     pull: "{{ vaultwarden_upgrade | default(false) | bool }}"
     state: present
+  notify:
+    - restart vaultwarden
 
-# - name: Ensure configuration dir is created
-#   file:
-#     path: /vaultwarden/conf
-#     state: directory
-#
-# - name: Ensure vaultwarden configuration file is copied
-#   template:
-#     src: vaultwarden.conf.j2
-#     dest: /vaultwarden/conf/vaultwarden.conf
-#     owner: '101'
-#     group: '101'
-#     mode: 0600
-#
-# -i base
 - name: Ensure vaultwarden container runs
   docker_container:
     name: "{{ vaultwarden_container_name }}"
@@ -38,26 +26,16 @@
     restart: yes
     memory: "{{ vaultwarden_container_memory_limit | default(omit) }}"
     volumes:
-      # - /vaultwarden/conf/vaultwarden.conf:/etc/vaultwarden/vaultwarden.conf
       - "{{ vaultwarden_container_name }}-data:/data"
     volumes_from:
       - "{{ vaultwarden_container_name }}-data"
     ports:
       # - "{{ vaultwarden_port }}:80"
-      - "80"
+      - "{{ vaultwarden_internal_port }}"
     env: "{{ vaultwarden_config }}"
-    # entrypoint: vaultwarden
-    # command: |
-    #   --config=/etc/vaultwarden/vaultwarden.conf
-    #   --db_host={{ vaultwarden_config_db_host }}
-    #   --database={{ vaultwarden_config_db_name }}
-    #   --db_user={{ vaultwarden_config_db_user }}
-    #   --db_password={{ vaultwarden_config_db_passwd }}
     container_default_behavior: no_defaults
     networks: "{{ vaultwarden_networks }}"
     networks_cli_compatible: yes
-  register: vaultwarden_container
-
-- name: Wait until vaultwarden starts up
-  wait_for: port={{ vaultwarden_port }} delay=5
-  when: vaultwarden_container.changed
+    network_mode: default
+  notify:
+    - restart vaultwarden

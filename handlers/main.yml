@@ -1,2 +1,12 @@
 ---
 # handlers file for ansible-role-odoo
+
+- name: Restart Vaultwarden
+  command: "docker restart {{ vaultwarden_container_name }}"
+  listen: restart vaultwarden
+
+- name: Wait until Vaultwarden starts up
+  wait_for:
+    port: "{{ vaultwarden_internal_port }}"
+    delay: 5
+  listen: restart vaultwarden

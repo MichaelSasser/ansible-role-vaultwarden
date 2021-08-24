@@ -3,7 +3,7 @@ dependencies: []
 
 galaxy_info:
   author: Michael Sasser
-  description: Manage installation of Vaultwarden
+  description: Install and manage a Vaultwarden docker container with ansible.
   company: MichaelSasser.org
   issue_tracker_url: https://github.com/MichaelSasser/ansible-role-vaultwarden/issues
   license: GPL-3.0-only
