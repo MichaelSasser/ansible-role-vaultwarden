@@ -36,6 +36,15 @@ An Ansible role, which installs and manages a Vaultwarden Docker container.
 | `vaultwarden_host_logdir`            | `/var/log/vaultwarden`                  | The directory, where the logfile will be stored in.                               |
 | `vaultwarden_logfile_name`           | `vaultwarden.log`                       | The filename of the logfile.                                                      |
 
+There is one specialty for `vaultwarden_networks`. I Usually deploy one 
+application per (cloud) server. Therefore I often need just one docker network 
+per server. To save some time `vaultwarden_networks` is set to a 
+`docker_network_name` network name. This network name is configured in
+in my playbook's vars and is most likely not configured on yours.
+On a more "complex" setup, I set `vaultwarden_networks` to the network I need.
+Likewise you can use `docker_network_name`, which only does make sense, if you
+configure multiple container networks on the fly like that or set 
+`vaultwarden_networks` in your vars to your need.
 
 ### Vaultwarden Config
 
