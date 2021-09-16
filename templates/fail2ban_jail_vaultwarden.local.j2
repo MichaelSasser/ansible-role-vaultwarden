@@ -5,7 +5,7 @@ enabled = {{ vaultwarden_fail2ban_enabled | default('true') }}
 port = {{ vaultwarden_fail2ban_config.external_ports | join(',') | default('80,443')}}
 filter = vaultwarden
 action = iptables-allports[name=vaultwarden, chain=FORWARD]
-logpath = {{ vaultwarden_fail2ban_logpath }}
+logpath = {{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}
 maxretry = {{ vaultwarden_fail2ban_config.maxretry | default(3) }}
 bantime = {{ vaultwarden_fail2ban_config.bantime | default(14400) }}
 findtime = {{ vaultwarden_fail2ban_config.findtime | default(14400) }}

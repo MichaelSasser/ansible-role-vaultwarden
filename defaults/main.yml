@@ -18,7 +18,6 @@ vaultwarden_upgrade: no
 # This will not work with the builtin webserver.
 # If you really need this to work, create an issue or write a PR.
 vaultwarden_fail2ban_enabled: false
-# vaultwarden_fail2ban_logpath: /var/log/vaultwarden/vaultwarden.log TODO REMOVE
 vaultwarden_fail2ban_config:
   findtime: 14400
   bantime: 14400
