@@ -4,21 +4,38 @@ An Ansible role, which installs and manages a Vaultwarden Docker container.
 
 ## Requirements
 
-This role doesn't install Docker on the host. You need to make sure the docker
-is installed and running on your system. You can do that e.g. with [ericsysmin's collection](https://galaxy.ansible.com/ericsysmin/docker) (which only contains the docker role).
+1. This role doesn't install Docker on the host. You need to make sure the docker
+   is installed and running on your system. You can do that e.g. with 
+   [ericsysmin's collection](https://galaxy.ansible.com/ericsysmin/docker) 
+   (which only contains the docker role).
+2. This role does not install or configure the optional feature `fail2ban`. 
+   It only makes sure the Vaultwarden logs are accessible, and it adds the 
+   Vaultwarden filter and jail to `fail2ban`. You can install `fail2ban` for 
+   example with the role 
+   [robertdebock.fail2ban](https://github.com/robertdebock/ansible-role-fail2ban).
+   Make sure to set the correct `vaultwarden_config.IP_HEADER` for your 
+   reverse proxy. For example, `x-forwarded-for`, when you are using `envoy` as
+   reverse proxy. Make sure to configure your reverse proxy to append that 
+   header.
+
 
 ## Role Variables
 
 
 | Variable                             | Default Value                           | Description                                                                       |
 | ----------------------------------   | --------------------------------------- | --------------------------------------------------------------------------------- |
-| `vaultwarden_docker_image`           | vaultwarden/server                      | The docker image, which is used to pull the container.                            |
-| `vaultwarden_docker_image_tag`       | alpine                                  | The tag of the image.                                                             |
-| `vaultwarden_container_name`         | vaultwarden                             | The container name.                                                               |
+| `vaultwarden_docker_image`           | `vaultwarden/server`                    | The docker image, which is used to pull the container.                            |
+| `vaultwarden_docker_image_tag`       | `alpine`                                | The tag of the image.                                                             |
+| `vaultwarden_container_name`         | `vaultwarden`                           | The container name.                                                               |
 | `vaultwarden_networks`               | `- name: "{{ docker_network_name }}"`   | The network the container will be connected to.                                   |
-| `vaultwarden_container_memory_limit` | null                                    | A memory limit for the container                                                  |
-| `vaultwarden_upgrade`                | no                                      | if set to `yes` the container will be updated to the latest version (of the tag). |
-| `vaultwarden_config`                 | null                                    | The Vaultwarden config (see below)                                                |
+| `vaultwarden_container_memory_limit` | `null`                                  | A memory limit for the container                                                  |
+| `vaultwarden_upgrade`                | `no`                                    | if set to `yes` the container will be updated to the latest version (of the tag). |
+| `vaultwarden_config`                 | `null`                                  | The Vaultwarden config (see below)                                                |
+| `vaultwarden_fail2ban_enabled`       | `false`                                 | Enable or disable the fail2ban jail for vaultwarden.                              |
+| `vaultwarden_fail2ban_config`        |                                         | Config options for the Vaultwarden fail2ban config (see below).                   |
+| `vaultwarden_host_logdir`            | `/var/log/vaultwarden`                  | The directory, where the logfile will be stored in.                               |
+| `vaultwarden_logfile_name`           | `vaultwarden.log`                       | The filename of the logfile.                                                      |
+
 
 ### Vaultwarden Config
 
@@ -55,6 +72,31 @@ vaultwarden_config:
   SMTP_PORT: "587"
   SMTP_USERNAME: "service@yourdomain.tld"
   SMTP_PASSWORD: "your_smtp_app_password"
+```
+
+### The Vaultwarden fail2ban Config
+
+The role variables are a `dict` in `vaultwarden_fail2ban_config`:
+
+| Variable           | Default Value  | Description                                                        |
+| ------------------ | -------------- | ------------------------------------------------------------------ |
+| `findtime`         | `14400`        | The time difference in which the tries must happen to get banned.  |
+| `bantime`          | `14400`        | The time a user gets banned.                                       |
+| `maxretry`         | `3`            | The numbers of allowed tries.                                      |
+| `external_ports`   | `[80, 443]`    | The ports used by the reverse proxy.                               |
+
+#### Example
+
+```yaml
+---
+
+vaultwarden_fail2ban_config:
+  findtime: 14400
+  bantime: 14400
+  maxretry: 3
+  external_ports:
+    - 80
+    - 443
 ```
 
 ## License

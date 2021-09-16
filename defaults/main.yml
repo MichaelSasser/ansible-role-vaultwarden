@@ -14,6 +14,23 @@ vaultwarden_upgrade: no
 # These are the environment variables from
 # https://raw.githubusercontent.com/dani-garcia/vaultwarden/main/.env.template
 
+# make sure to use a reverse proxy, like envoy or nginx with this feature.
+# This will not work with the builtin webserver.
+# If you really need this to work, create an issue or write a PR.
+vaultwarden_fail2ban_enabled: false
+# vaultwarden_fail2ban_logpath: /var/log/vaultwarden/vaultwarden.log TODO REMOVE
+vaultwarden_fail2ban_config:
+  findtime: 14400
+  bantime: 14400
+  maxretry: 3
+  external_ports:
+    - 80
+    - 443
+
+# logdir on the host, not inside the container.
+vaultwarden_host_logdir: /var/log/vaultwarden
+vaultwarden_logfile_name: vaultwarden.log
+
 vaultwarden_config: null
 # vaultwarden_config:
 #   DATA_FOLDER: "data"
@@ -40,10 +57,10 @@ vaultwarden_config: null
 #   SEND_PURGE_SCHEDULE: "0 5 * * * *"
 #   TRASH_PURGE_SCHEDULE: "0 5 0 * * *"
 #   EXTENDED_LOGGING: "true"
-#   LOG_TIMESTAMP_FORMAT: "%Y-%m-%d %H:%M:%S.%3f"
-#   LOG_FILE: "/path/to/log"
+#   LOG_TIMESTAMP_FORMAT: "%Y-%m-%d %H:%M:%S.%3f"  # overwritten by mixin
+#   LOG_FILE: "/path/to/log"    # overwritten by mixin
 #   USE_SYSLOG: "false"
-#   LOG_LEVEL: "Info"
+#   LOG_LEVEL: "Info"    # overwritten by mixin
 #   ENABLE_DB_WAL: "true"
 #   DB_CONNECTION_RETRIES: "15"
 #   DISABLE_ICON_DOWNLOAD: "false"

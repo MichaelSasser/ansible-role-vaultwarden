@@ -1,0 +1,53 @@
+---
+# tasks file for ansible-role-vaultwarden
+
+- name: Create vaultwarden log dir
+  file:
+    path: "{{ vaultwarden_host_logdir }}"
+    state: directory
+    owner: 0
+    group: 0
+    mode: "0644"
+  notify:
+    - reload fail2ban
+
+- name: Ensure logfile exists
+  copy:
+    content: ""
+    dest: "{{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}"
+    force: no
+    owner: 0
+    group: 0
+    mode: "0644"
+  notify:
+    - reload fail2ban
+
+- name: Ensure vaultwarden logfile has the correct permissions
+  file:
+    path: "{{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}"
+    state: file
+    owner: 0
+    group: 0
+    mode: "0644"
+  notify:
+    - reload fail2ban
+
+- name: Ensure vaultwarden fail2ban filter is up-to-date
+  template:
+    src: fail2ban_filter_vaultwarden.local.j2
+    dest: /etc/fail2ban/filter.d/vaultwarden.local
+    owner: 0
+    group: 0
+    mode: "0644"
+  notify:
+    - reload fail2ban
+
+- name: Ensure vaultwarden fail2ban jail is up-to-date
+  template:
+    src: fail2ban_jail_vaultwarden.local.j2
+    dest: /etc/fail2ban/jail.d/vaultwarden.local
+    owner: 0
+    group: 0
+    mode: "0644"
+  notify:
+    - reload fail2ban

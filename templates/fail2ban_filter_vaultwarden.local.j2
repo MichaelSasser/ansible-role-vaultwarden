@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+[INCLUDES]
+before = common.conf
+
+# [2021-09-15 21:50:59.557][vaultwarden::api::identity][ERROR] Username or password is incorrect. Try again. IP: 172.18.0.4. Username: username@domain.tld.
+[Definition]
+failregex = ^.*Username or password is incorrect\. Try again\. IP: <ADDR>\. Username:.*$
+ignoreregex =
+
+# vim: set ft=toml :

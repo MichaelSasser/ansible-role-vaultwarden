@@ -1,6 +1,36 @@
 ---
 # tasks file for ansible-role-vaultwarden
 
+- name: Populate service facts
+  service_facts:
+
+- name: Check if fail2ban is installed (when it is enabled)
+  assert:
+    that: "'fail2ban' in services"
+  when: vaultwarden_fail2ban_enabled == true
+
+- debug:
+    msg: fail2ban service exists.
+  when: "'fail2ban' in services"
+
+- name: Set fact vaultwarden_compiled_config (1/2)
+  set_fact:
+    vaultwarden_compiled_config: "{{ vaultwarden_config | combine(vaultwarden_internal_config_fail2ban_mixin) }}"
+    vaultwarden_logfile_mount_str: "{{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}:{{ vaultwarden_internal_config_fail2ban_mixin.LOG_FILE }}"
+  when: vaultwarden_fail2ban_enabled == true
+
+- name: Set fact vaultwarden_compiled_config (2/2)
+  set_fact:
+    vaultwarden_compiled_config: "{{ vaultwarden_config }}"
+    vaultwarden_logfile_mount_str: null
+  when: vaultwarden_fail2ban_enabled == false
+
+- name: Configure fail2ban
+  include_tasks: configure_fail2ban.yml
+  when: vaultwarden_fail2ban_enabled == true
+
+######### vaultwarden #############
+
 - name: Ensure vaultwarden image is pulled
   docker_image:
     name: "{{ vaultwarden_docker_image }}"
@@ -27,12 +57,11 @@
     memory: "{{ vaultwarden_container_memory_limit | default(omit) }}"
     volumes:
       - "{{ vaultwarden_container_name }}-data:/data"
+      - "{{ vaultwarden_logfile_mount_str | default(omit) }}"
     volumes_from:
       - "{{ vaultwarden_container_name }}-data"
-    ports:
-      # - "{{ vaultwarden_port }}:80"
-      - "{{ vaultwarden_internal_port }}"
-    env: "{{ vaultwarden_config }}"
+    ports: "{{ vaultwarden_internal_ports }}"
+    env: "{{ vaultwarden_compiled_config }}"
     container_default_behavior: no_defaults
     networks: "{{ vaultwarden_networks }}"
     networks_cli_compatible: yes

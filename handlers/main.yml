@@ -7,6 +7,12 @@
 
 - name: Wait until Vaultwarden starts up
   wait_for:
-    port: "{{ vaultwarden_internal_port }}"
+    port: "{{ vaultwarden_internal_ports[0] }}" # TODO: Maybe check all?
     delay: 5
   listen: restart vaultwarden
+
+- name: Reload fail2ban
+  systemd:
+    name: fail2ban
+    state: reloaded
+  listen: reload fail2ban
