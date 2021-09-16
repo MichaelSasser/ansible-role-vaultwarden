@@ -5,4 +5,4 @@ vaultwarden_internal_ports:
 vaultwarden_internal_config_fail2ban_mixin:
   LOG_TIMESTAMP_FORMAT: "%Y-%m-%d %H:%M:%S.%3f"
   LOG_FILE: "/vaultwarden.log"
-  LOG_LEVEL: "Info"
+  LOG_LEVEL: "Error"

@@ -29,6 +29,10 @@
   include_tasks: configure_fail2ban.yml
   when: vaultwarden_fail2ban_enabled == true
 
+- name: Configure logrotate
+  include_tasks: configure_logrotate.yml
+  when: vaultwarden_fail2ban_enabled == true
+
 ######### vaultwarden #############
 
 - name: Ensure vaultwarden image is pulled
