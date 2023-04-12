@@ -77,7 +77,7 @@ vaultwarden_config: null
 #   SIGNUPS_DOMAINS_WHITELIST: "example.com,example.net,example.org"
 #   ORG_CREATION_USERS: "none"
 #   # ORG_CREATION_USERS: "admin1@example.com,admin2@example.com"
-#   # ADMIN_TOKEN: "Vy2VyYTTsKPv8W5aEOWUbB/Bt3DEKePbHmI4m9VcemUMS2rEviDowNAFqYi1xjmp"
+#   # ADMIN_TOKEN: "alkdsfjlajdslfkjsalkdjflaldsjf"
 #   DISABLE_ADMIN_TOKEN: "false"
 #   INVITATIONS_ALLOWED: "true"
 #   INVITATION_ORG_NAME: "Vaultwarden"
