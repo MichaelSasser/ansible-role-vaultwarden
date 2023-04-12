@@ -2,7 +2,7 @@
 # tasks file for ansible-role-vaultwarden
 
 - name: Ensure vaultwarden logrotate configuration up-to-date
-  template:
+  ansible.builtin.template:
     src: logrotate.j2
     dest: /etc/logrotate.d/vaultwarden
     owner: 0

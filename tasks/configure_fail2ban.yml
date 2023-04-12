@@ -2,7 +2,7 @@
 # tasks file for ansible-role-vaultwarden
 
 - name: Create vaultwarden log dir
-  file:
+  ansible.builtin.file:
     path: "{{ vaultwarden_host_logdir }}"
     state: directory
     owner: 0
@@ -12,7 +12,7 @@
     - reload fail2ban
 
 - name: Ensure logfile exists
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}"
     force: no
@@ -23,7 +23,7 @@
     - reload fail2ban
 
 - name: Ensure vaultwarden logfile has the correct permissions
-  file:
+  ansible.builtin.file:
     path: "{{ vaultwarden_host_logdir }}/{{ vaultwarden_logfile_name }}"
     state: file
     owner: 0
@@ -33,7 +33,7 @@
     - reload fail2ban
 
 - name: Ensure vaultwarden fail2ban filter is up-to-date
-  template:
+  ansible.builtin.template:
     src: fail2ban_filter_vaultwarden.local.j2
     dest: /etc/fail2ban/filter.d/vaultwarden.local
     owner: 0
@@ -43,7 +43,7 @@
     - reload fail2ban
 
 - name: Ensure vaultwarden fail2ban jail is up-to-date
-  template:
+  ansible.builtin.template:
     src: fail2ban_jail_vaultwarden.local.j2
     dest: /etc/fail2ban/jail.d/vaultwarden.local
     owner: 0

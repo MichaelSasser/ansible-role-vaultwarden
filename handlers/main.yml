@@ -4,23 +4,31 @@
 - name: Ensure vaultwarden container runs
   docker_container:
     name: "{{ vaultwarden_container_name }}"
-    image: "{{ vaultwarden_docker_image }}:{{ vaultwarden_docker_image_tag }}"
     restart_policy: always
     state: started
     restart: yes
-    memory: "{{ vaultwarden_container_memory_limit | default(omit) }}"
-    volumes:
-      - "{{ vaultwarden_container_name }}-data:/data"
-      - "{{ vaultwarden_logfile_mount_str | default(omit) }}"
-    volumes_from:
-      - "{{ vaultwarden_container_name }}-data"
-    ports: "{{ vaultwarden_internal_ports }}"
-    env: "{{ vaultwarden_compiled_config }}"
-    container_default_behavior: no_defaults
-    networks: "{{ vaultwarden_networks }}"
-    networks_cli_compatible: yes
-    network_mode: default
   listen: start vaultwarden
+
+# - name: Ensure vaultwarden container runs
+#   docker_container:
+#     name: "{{ vaultwarden_container_name }}"
+#     image: "{{ vaultwarden_docker_image }}:{{ vaultwarden_docker_image_tag }}"
+#     restart_policy: always
+#     state: started
+#     restart: yes
+#     memory: "{{ vaultwarden_container_memory_limit | default(omit) }}"
+#     volumes:
+#       - "{{ vaultwarden_container_name }}-data:/data"
+#       - "{{ vaultwarden_logfile_mount_str | default(omit) }}"
+#     # volumes_from:
+#     #   - "{{ vaultwarden_container_name }}-data"
+#     ports: "{{ vaultwarden_internal_ports }}"
+#     env: "{{ vaultwarden_compiled_config }}"
+#     container_default_behavior: no_defaults
+#     networks: "{{ vaultwarden_networks }}"
+#     networks_cli_compatible: yes
+#     network_mode: default
+#   listen: start vaultwarden
 
 - name: Wait until Vaultwarden starts up
   wait_for:
